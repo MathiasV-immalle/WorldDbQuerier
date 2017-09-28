@@ -8,7 +8,9 @@ namespace WorldDbQuerier
 
         static void Main(string[] args)
         {
-            PrintVerwelkoming();
+            // Verwelkoming
+            PrintHello();
+            // Version -v
             if (args.Length > 0)
             {
                 switch (args[0])
@@ -25,22 +27,33 @@ namespace WorldDbQuerier
                         break;
                 }
             }
+            // Menu
             PrintMenu();
-            MaakConnectie();
+            string Choice = Console.ReadLine();
+            string SubChoice = "";
+            if (Choice == "Country") {
+                Console.WriteLine("Submenu: Make your choice:");
+                Console.WriteLine("Count | List");
+                SubChoice = Console.ReadLine();
+                if (SubChoice == "Count") {
+                    ConnectCountryCount();
+                }
+            }
         }
 
-        static void PrintVerwelkoming() {
+        static void PrintHello() {
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Welcome to WorldDbQuerier");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
         static void PrintMenu() {
-            Console.WriteLine("Menu:");
-            Console.WriteLine("menu coming");
+            Console.WriteLine("Menu: Make your choice:");
+            Console.WriteLine("Country | Region | Continent | SurfaceArea");
+            Console.WriteLine("LifeExpentancy | Population | GovernmentForm");
         }
 
-        static void MaakConnectie()
+        static void ConnectCountryCount()
         {
             MySqlConnection conn = new MySqlConnection();
             conn.ConnectionString =
@@ -52,9 +65,9 @@ namespace WorldDbQuerier
 
             conn.Open();
 
-            int AantalLanden = Convert.ToInt32(cmd.ExecuteScalar());
+            int CountCountries = Convert.ToInt32(cmd.ExecuteScalar());
 
-            Console.WriteLine("Aantal landen : {0}", AantalLanden);
+            Console.WriteLine("Total Countries: {0}", CountCountries);
         }
     }
 }
