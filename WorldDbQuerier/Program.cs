@@ -6,7 +6,8 @@ namespace WorldDbQuerier
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("WorldDbQuerier 0.1!");
+
         }
     }
 }
