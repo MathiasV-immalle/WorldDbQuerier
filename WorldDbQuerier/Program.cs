@@ -30,13 +30,18 @@ namespace WorldDbQuerier
             // Menu
             PrintMenu();
             string Choice = Console.ReadLine();
+            Choice = Choice.ToLower();
             string SubChoice = "";
-            if (Choice == "Country") {
+            if (Choice == "country") {
                 Console.WriteLine("Submenu: Make your choice:");
                 Console.WriteLine("Count | List");
                 SubChoice = Console.ReadLine();
-                if (SubChoice == "Count") {
+                SubChoice = SubChoice.ToLower();
+                if (SubChoice == "count") {
                     ConnectCountryCount();
+                } else if (SubChoice == "list")
+                {
+                    ConnectCountryList();
                 }
             }
         }
@@ -68,6 +73,27 @@ namespace WorldDbQuerier
             int CountCountries = Convert.ToInt32(cmd.ExecuteScalar());
 
             Console.WriteLine("Total Countries: {0}", CountCountries);
+        }
+
+        static void ConnectCountryList()
+        {
+            MySqlConnection conn = new MySqlConnection();
+            conn.ConnectionString =
+                "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
+
+            Console.WriteLine("Connecting to MySQL...");
+            conn.Open();
+            Console.WriteLine("---");
+
+            string sql = "SELECT Name FROM Country";
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                Console.WriteLine(rdr[0]);
+            }
+            Console.WriteLine("---");
         }
     }
 }
