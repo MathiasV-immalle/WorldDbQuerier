@@ -8,28 +8,36 @@ namespace WorldDbQuerier
 
         static void Main(string[] args)
         {
+            // Verwelkoming
+            PrintHello();
+            VraagInfo();
+            // Version -v
+            if (args.Length > 0)
+            {
+                switch (args[0])
+                {
+                    case "-v":
+                    case "--version":
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine("Version {0}", version);
+                        Console.ForegroundColor = ConsoleColor.White;
+                        break;
+                    case "-h":
+                    case "--help":
+                        Console.WriteLine("-v, --version : Display program version");
+                        Console.WriteLine("-h, --help: Display help information");
+                        break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Onbekend argument");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        break;
+                }
+            }
+
             int exit = 0;
             while (exit == 0)
             {
-                // Verwelkoming
-                PrintHello();
-                // Version -v
-                if (args.Length > 0)
-                {
-                    switch (args[0])
-                    {
-                        case "-v":
-                            Console.ForegroundColor = ConsoleColor.Cyan;
-                            Console.WriteLine("Version {0}", version);
-                            Console.ForegroundColor = ConsoleColor.White;
-                            break;
-                        default:
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Onbekend argument");
-                            Console.ForegroundColor = ConsoleColor.White;
-                            break;
-                    }
-                }
                 // Menu
                 PrintMenu();
                 string Choice = Console.ReadLine();
@@ -39,33 +47,54 @@ namespace WorldDbQuerier
                 switch (Choice)
                 {
                     case "country":
-                        PrintSubmenu("Count | List | Search | SearchAll");
+                    case "1":
+                        PrintSubmenu();
                         SubChoice = Console.ReadLine();
                         SubChoice = SubChoice.ToLower();
                         switch (SubChoice)
                         {
                             case "count":
+                            case "1":
                                 ConnectCountryCount();
                                 break;
                             case "list":
+                            case "2":
                                 ConnectCountryList();
                                 break;
                             case "search":
+                            case "3":
                                 ConnectCountrySearch();
                                 break;
                             case "searchall":
+                            case "4":
                                 ConnectCountrySearchAll();
+                                break;
+                            case "69":
+                            case "0":
+                            case "21":
+                                WeirdItemException();
+                                break;
+                            case "":
+                                PrintNoChoiceError();
+                                break;
+                            default:
+                                PrintChoiceError();
                                 break;
                         }
                         break;
                     case "quit":
                         exit = 1;
                         break;
+                    case "69":
+                    case "0":
+                    case "21":
+                        WeirdItemException();
+                        break;
                     case "":
-                        PrintGeenKeuzeError();
+                        PrintNoChoiceError();
                         break;
                     default:
-                        PrintKeuzeError();
+                        PrintChoiceError();
                         break;
                 }
             }
@@ -84,6 +113,16 @@ namespace WorldDbQuerier
             return line;
         }
 
+        static void VraagInfo()
+        {
+            Console.WriteLine("Password:");
+            string password = Console.ReadLine();
+            Console.WriteLine("Username:");
+            string username = Console.ReadLine();
+            Console.WriteLine("IP-adress:");
+            string ipadress = Console.ReadLine();
+        }
+
         static void PrintHello() {
             Console.ForegroundColor = ConsoleColor.Cyan;
             string welcome = "Welcome to WorldDbQuerier";
@@ -94,52 +133,54 @@ namespace WorldDbQuerier
         }
 
         static void PrintMenu() {
-            string print = "Menu: Make your choice:";
-            Console.WriteLine(Underline(print));
+            string print = "Menu:";
             Console.WriteLine(print);
             Console.WriteLine(Underline(print));
-            string menu1 = "Country | Region | Continent | SurfaceArea";
-            string menu2 = "LifeExpentancy | Population | GovernmentForm | QUIT";
+            string menu1 = "1) Country 2) Region 3) Continent 4) SurfaceArea";
+            string menu2 = "5) LifeExpentancy 6) Population 7) GovernmentForm 8) QUIT";
             Console.WriteLine(menu1);
             Console.WriteLine(menu2);
         }
 
-        static void PrintSubmenu(string submenu) {
-            string print = "Submenu: Make your choice:";
-
-            Console.WriteLine(Underline(print));
-            Console.WriteLine(print);
-            Console.WriteLine(Underline(print));
+        static void PrintSubmenu() {
+            string submenuOnderlijnd = "Submenu:";
+            string submenu = "1) Count 2) List 3) Search 4) SearchAll";
+            Console.WriteLine(Underline(submenuOnderlijnd));
+            Console.WriteLine(submenuOnderlijnd);
+            Console.WriteLine(Underline(submenuOnderlijnd));
             Console.WriteLine(submenu);
         }
 
-        static void PrintGeenKeuzeError()
+        static void PrintNoChoiceError()
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Gelieve een keuze in te voeren");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        static void PrintKeuzeError()
+        static void PrintChoiceError()
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Gelieve te kiezen uit bovenstaande items");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        static void WeirdItemException()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Don't you dare to try again :[");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
         static void ConnectCountryCount()
         {
             MySqlConnection conn = new MySqlConnection();
-            conn.ConnectionString =
-                "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
-
+            conn.ConnectionString = "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
             Console.WriteLine("Connecting to MySQL...");
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
             cmd.CommandText = "SELECT count(Name) FROM Country";
-
             conn.Open();
-
             int CountCountries = Convert.ToInt32(cmd.ExecuteScalar());
             string total = "Total Countries: ";
             string amount = total + CountCountries.ToString();
@@ -153,17 +194,13 @@ namespace WorldDbQuerier
         static void ConnectCountryList()
         {
             MySqlConnection conn = new MySqlConnection();
-            conn.ConnectionString =
-                "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
-
+            conn.ConnectionString = "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
             Console.WriteLine("Connecting to MySQL...");
             conn.Open();
             Console.WriteLine("---");
-
             string sql = "SELECT Name FROM Country";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
-
             int teller = 1;
             Console.ForegroundColor = ConsoleColor.Green;
             while (rdr.Read())
@@ -178,17 +215,13 @@ namespace WorldDbQuerier
         static void ConnectCountrySearchAll()
         {
             MySqlConnection conn = new MySqlConnection();
-            conn.ConnectionString =
-                "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
-
+            conn.ConnectionString = "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
             Console.WriteLine("Connecting to MySQL...");
             conn.Open();
             Console.WriteLine("---");
-
             string sql = "SELECT * FROM Country";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
             MySqlDataReader rdr = cmd.ExecuteReader();
-
             int teller = 1;
             Console.ForegroundColor = ConsoleColor.Green;
             while (rdr.Read())
@@ -203,25 +236,20 @@ namespace WorldDbQuerier
         static void ConnectCountrySearch()
         {
             MySqlConnection conn = new MySqlConnection();
-            conn.ConnectionString =
-                "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
-
+            conn.ConnectionString = "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
             Console.WriteLine("Type country name:");
             string name = Console.ReadLine();
             Console.WriteLine("Connecting to MySQL...");
             conn.Open();
             Console.WriteLine("---");
-
-            string sql = @"SELECT * FROM Country WHERE Name LIKE='" + name + "\'";
+            string sql = "SELECT * FROM Country WHERE Name LIKE @name";
             MySqlCommand cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@name", "%" + name + "%");
             MySqlDataReader rdr = cmd.ExecuteReader();
-
-            int teller = 1;
             Console.ForegroundColor = ConsoleColor.Green;
             while (rdr.Read())
             {
-                Console.WriteLine(Convert.ToString(teller) + ": " + rdr[0] + " | " + rdr[1] + " | " + rdr[2] + " | " + rdr[3] + " | " + rdr[4] + " | " + rdr[5] + " | " + rdr[6] + " | " + rdr[7] + " | " + rdr[8] + " | " + rdr[9] + " | " + rdr[10] + " | " + rdr[11] + " | " + rdr[12] + " | " + rdr[13] + " | " + rdr[14]);
-                teller++;
+                Console.WriteLine(rdr[0] + " | " + rdr[1] + " | " + rdr[2] + " | " + rdr[3] + " | " + rdr[4] + " | " + rdr[5] + " | " + rdr[6] + " | " + rdr[7] + " | " + rdr[8] + " | " + rdr[9] + " | " + rdr[10] + " | " + rdr[11] + " | " + rdr[12] + " | " + rdr[13] + " | " + rdr[14]);
             }
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("---");
