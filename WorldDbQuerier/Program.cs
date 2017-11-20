@@ -10,7 +10,6 @@ namespace WorldDbQuerier
         {
             // Verwelkoming
             PrintHello();
-            VraagInfo();
             // Version -v
             if (args.Length > 0)
             {
@@ -112,17 +111,7 @@ namespace WorldDbQuerier
             line += "-";
             return line;
         }
-
-        static void VraagInfo()
-        {
-            Console.WriteLine("Password:");
-            string password = Console.ReadLine();
-            Console.WriteLine("Username:");
-            string username = Console.ReadLine();
-            Console.WriteLine("IP-adress:");
-            string ipadress = Console.ReadLine();
-        }
-
+        
         static void PrintHello() {
             Console.ForegroundColor = ConsoleColor.Cyan;
             string welcome = "Welcome to WorldDbQuerier";
