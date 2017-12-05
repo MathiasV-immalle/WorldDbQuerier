@@ -4,7 +4,7 @@ namespace WorldDbQuerier
 {
     class Program
     {
-        static string version = "0.3";
+        static string version = "0.4";
 
         static void Main(string[] args)
         {
@@ -82,6 +82,7 @@ namespace WorldDbQuerier
                         }
                         break;
                     case "quit":
+                    case "8":
                         exit = 1;
                         break;
                     case "69":
@@ -163,85 +164,91 @@ namespace WorldDbQuerier
 
         static void ConnectCountryCount()
         {
-            MySqlConnection conn = new MySqlConnection();
-            conn.ConnectionString = "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
-            Console.WriteLine("Connecting to MySQL...");
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "SELECT count(Name) FROM Country";
-            conn.Open();
-            int CountCountries = Convert.ToInt32(cmd.ExecuteScalar());
-            string total = "Total Countries: ";
-            string amount = total + CountCountries.ToString();
-            Console.WriteLine(Underline(amount));
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(total + "{0}", CountCountries);
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(Underline(amount));
+            using (MySqlConnection conn = new MySqlConnection(@"Server=192.168.94.10;Port=3306;Database=world;Uid=imma;Pwd=immapwd;"))
+            {
+                Console.WriteLine("Connecting to MySQL...");
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conn;
+                cmd.CommandText = "SELECT count(Name) FROM Country";
+                conn.Open();
+                int CountCountries = Convert.ToInt32(cmd.ExecuteScalar());
+                string total = "Total Countries: ";
+                string amount = total + CountCountries.ToString();
+                Console.WriteLine(Underline(amount));
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(total + "{0}", CountCountries);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(Underline(amount));
+            }
         }
 
         static void ConnectCountryList()
         {
-            MySqlConnection conn = new MySqlConnection();
-            conn.ConnectionString = "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
-            Console.WriteLine("Connecting to MySQL...");
-            conn.Open();
-            Console.WriteLine("---");
-            string sql = "SELECT Name FROM Country";
-            MySqlCommand cmd = new MySqlCommand(sql, conn);
-            MySqlDataReader rdr = cmd.ExecuteReader();
-            int teller = 1;
-            Console.ForegroundColor = ConsoleColor.Green;
-            while (rdr.Read())
+            using (MySqlConnection conn = new MySqlConnection(@"Server=192.168.94.10;Port=3306;Database=world;Uid=imma;Pwd=immapwd;"))
             {
-                Console.WriteLine(Convert.ToString(teller) + ": " + rdr[0]);
-                teller++;
+                Console.WriteLine("Connecting to MySQL...");
+                conn.Open();
+                Console.WriteLine("---");
+                string sql = "SELECT Name FROM Country";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                int teller = 1;
+                Console.ForegroundColor = ConsoleColor.Green;
+                while (rdr.Read())
+                {
+                    Console.WriteLine(Convert.ToString(teller) + ": " + rdr[0]);
+                    teller++;
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("---");
             }
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("---");
         }
 
         static void ConnectCountrySearchAll()
         {
-            MySqlConnection conn = new MySqlConnection();
-            conn.ConnectionString = "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
-            Console.WriteLine("Connecting to MySQL...");
-            conn.Open();
-            Console.WriteLine("---");
-            string sql = "SELECT * FROM Country";
-            MySqlCommand cmd = new MySqlCommand(sql, conn);
-            MySqlDataReader rdr = cmd.ExecuteReader();
-            int teller = 1;
-            Console.ForegroundColor = ConsoleColor.Green;
-            while (rdr.Read())
+            using (MySqlConnection conn = new MySqlConnection(@"Server=192.168.94.10;Port=3306;Database=world;Uid=imma;Pwd=immapwd;"))
             {
-                Console.WriteLine(Convert.ToString(teller) + ": " + rdr[0] + " | " + rdr[1] + " | " + rdr[2] + " | " + rdr[3]+ " | " + rdr[4] + " | " + rdr[5] + " | " + rdr[6] + " | " + rdr[7] + " | " + rdr[8] + " | " + rdr[9] + " | " + rdr[10] + " | " + rdr[11] + " | " + rdr[12] + " | " + rdr[13] + " | " + rdr[14]);
-                teller++;
+                Console.WriteLine("Connecting to MySQL...");
+                conn.Open();
+                Console.WriteLine("---");
+                string sql = "SELECT * FROM Country";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                int teller = 1;
+                Console.ForegroundColor = ConsoleColor.Green;
+                while (rdr.Read())
+                {
+                    Console.WriteLine(Convert.ToString(teller) + ": " + rdr[0] + " | " + rdr[1] + " | " + rdr[2] + " | " + rdr[3] + " | " + rdr[4] + " | " + rdr[5] + " | " + rdr[6] + " | " + rdr[7] + " | " + rdr[8] + " | " + rdr[9] + " | " + rdr[10] + " | " + rdr[11] + " | " + rdr[12] + " | " + rdr[13] + " | " + rdr[14]);
+                    teller++;
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("---");
             }
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("---");
         }
 
         static void ConnectCountrySearch()
         {
-            MySqlConnection conn = new MySqlConnection();
-            conn.ConnectionString = "Server=192.168.56.101;Port=3306;Database=world;Uid=imma;Pwd=imma;";
-            Console.WriteLine("Type country name:");
-            string name = Console.ReadLine();
-            Console.WriteLine("Connecting to MySQL...");
-            conn.Open();
-            Console.WriteLine("---");
-            string sql = "SELECT * FROM Country WHERE Name LIKE @name";
-            MySqlCommand cmd = new MySqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@name", "%" + name + "%");
-            MySqlDataReader rdr = cmd.ExecuteReader();
-            Console.ForegroundColor = ConsoleColor.Green;
-            while (rdr.Read())
-            {
-                Console.WriteLine(rdr[0] + " | " + rdr[1] + " | " + rdr[2] + " | " + rdr[3] + " | " + rdr[4] + " | " + rdr[5] + " | " + rdr[6] + " | " + rdr[7] + " | " + rdr[8] + " | " + rdr[9] + " | " + rdr[10] + " | " + rdr[11] + " | " + rdr[12] + " | " + rdr[13] + " | " + rdr[14]);
+            using (MySqlConnection conn = new MySqlConnection(@"Server=192.168.94.10;Port=3306;Database=world;Uid=imma;Pwd=immapwd;"))
+            { 
+                Console.WriteLine("Type country name:");
+                string name = Console.ReadLine();
+                Console.WriteLine("Connecting to MySQL...");
+                conn.Open();
+                Console.WriteLine("---");
+                string sql = "SELECT * FROM Country WHERE Name LIKE @name";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@name", "%" + name + "%");
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                Console.ForegroundColor = ConsoleColor.Green;
+                int teller = 1;
+                while (rdr.Read())
+                {
+                    Console.WriteLine(Convert.ToString(teller) + ": " + rdr[0] + " | " + rdr[1] + " | " + rdr[2] + " | " + rdr[3] + " | " + rdr[4] + " | " + rdr[5] + " | " + rdr[6] + " | " + rdr[7] + " | " + rdr[8] + " | " + rdr[9] + " | " + rdr[10] + " | " + rdr[11] + " | " + rdr[12] + " | " + rdr[13] + " | " + rdr[14]);
+                    teller++;
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("---");
             }
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("---");
         }
     }
 }
